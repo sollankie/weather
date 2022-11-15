@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app" :class="weather.main && weather.main.temp > 16 ? 'hot': ''">
       <main>
         <div class="search-box">
           <input 
@@ -8,21 +8,22 @@
                      type="text" 
                      class="search-bar"
                      v-model="query"
+                     @keypress="fetch_weather"
             />
           
         </div>
     
-        <div class="weather-wrap" >
+        <div class="weather-wrap" v-if= weather.main>
           <div class="location-box">
-            <div class="location">k</div>
-            <div class="date">a</div>
+            <div class="location">{{ weather.name }}, {{ weather.sys.country }}</div>
+            <div class="date"> {{ dateBuilder() }}</div>
           </div>
           <div class="weather-box">
-            <div class="temp">s</div>
-            <div class="weather-image">
+            <div class="temp">{{ Math.round(weather.main.temp) }}°C</div>
+            <div class="weather-image"><img id="wicon" alt="Weather icon" :src="`http://openweathermap.org/img/w/${weather.weather[0].icon}.png` ">
             </div>
-             <div class="weather">s</div>
-             <div class="weather-description">s</div>
+             <div class="weather">{{ weather.weather[0].main }}</div>
+             <div class="weather-description">{{ weather.weather[0].description }}</div>
           </div>
         </div>
       </main>
@@ -63,7 +64,7 @@
         let date = d.getDate();
         let month = months[d.getMonth()];
         let year = d.getFullYear(); 
-        return `${day} ${date} ${month} ${year}`; 
+        return `${day} - ${date} ${month} ${year}`; 
       },
 
     }
@@ -83,11 +84,20 @@
   }
 
   #app {
-    background-image: url("assets/25501.jpg");
+    background-image: url("assets/cold.png");
     background-size: cover;
     background-position: bottom;
     transition: 0.4s;
   }
+
+#app.hot {
+  background-image: url("assets/good.jpg");
+  background-size: cover;
+    background-position: bottom;
+    transition: 0.4s;
+}
+
+
   main {
     min-height: 100vh;
     padding: 25px;
